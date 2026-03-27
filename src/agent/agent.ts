@@ -34,7 +34,7 @@ async function executeTool(toolName: string, parameters: any) {
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // Função principal do agente com Agent Loop (ReAct)
-export async function runAgent(prompt: string) {
+export async function runAgent(prompt: string, onStep?: (stepInfo: string) => void) {
   const tools = await loadTools();
 
   const systemPrompt = `
@@ -99,6 +99,11 @@ Nunca invente IDs ou tente adivinhar chaves de banco de dados. Sempre que necess
 
     const llmResponse = completion.choices[0].message?.content || "";
     console.log("LLM sugeriu:", llmResponse);
+    
+    // Envia o pensamento do agente para o callback, se ele existir
+    if (onStep) {
+      onStep(`\n[Agente Pensando]:\n${llmResponse}\n`);
+    }
     // Armazenando passo na memória
     messages.push({ role: "assistant", content: llmResponse });
 
@@ -119,12 +124,23 @@ Nunca invente IDs ou tente adivinhar chaves de banco de dados. Sempre que necess
     }
 
     // Executar tool escolhida
+
+    // Envia qual ferramenta será executada para o callback mostrar na tela
+    if (onStep) {
+      onStep(`\n[Chamando a Ferramenta '${parsed.tool}']:\n`);
+    }
+
     console.log(`Chamando tool: ${parsed.tool}...`);
     let result;
     try {
       result = await executeTool(parsed.tool, parsed.parameters);
     } catch (error: any) {
       result = { error: error.message || "Erro desconhecido ao executar tool" };
+    }
+    
+    // Envia o resultado da execução da ferramenta para o callback
+    if (onStep) {
+      onStep(`\n[Resultado da Ferramenta '${parsed.tool}']:\n${JSON.stringify(result, null, 2)}\n`);
     }
     
     console.log("Resultado da tool:", JSON.stringify(result));

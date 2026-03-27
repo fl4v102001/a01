@@ -1,7 +1,5 @@
 import { McpTool } from '../types';
-import fetch from 'node-fetch';
-
-const API_BASE = 'http://localhost:3000/api';
+import { AutorizacaoService } from '../../api/services/autorizacao.service';
 
 export const autorizacoesTools: McpTool[] = [
   {
@@ -17,13 +15,8 @@ export const autorizacoesTools: McpTool[] = [
       required: ['id_perfil', 'id_transacao', 'autorizacao']
     },
     execute: async (args: any) => {
-      const resp = await fetch(`${API_BASE}/autorizacoes`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(args)
-      });
-      if (!resp.ok) throw new Error(`Falha ao conceder autorização: ${resp.statusText}`);
-      return await resp.json();
+      const autorizacaoService = new AutorizacaoService();
+      return await autorizacaoService.create(args);
     }
   },
   {
@@ -39,13 +32,8 @@ export const autorizacoesTools: McpTool[] = [
     },
     execute: async (args: any) => {
       const { id, ...body } = args;
-      const resp = await fetch(`${API_BASE}/autorizacoes/${id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      });
-      if (!resp.ok) throw new Error(`Falha ao alterar autorização: ${resp.statusText}`);
-      return await resp.json();
+      const autorizacaoService = new AutorizacaoService();
+      return await autorizacaoService.update(id, body);
     }
   },
   {
@@ -59,10 +47,8 @@ export const autorizacoesTools: McpTool[] = [
       required: ['id']
     },
     execute: async (args: any) => {
-      const resp = await fetch(`${API_BASE}/autorizacoes/${args.id}`, {
-        method: 'DELETE'
-      });
-      if (!resp.ok) throw new Error(`Falha ao revogar autorização: ${resp.statusText}`);
+      const autorizacaoService = new AutorizacaoService();
+      await autorizacaoService.delete(args.id);
       return { success: true, message: 'Autorização revogada com sucesso' };
     }
   }

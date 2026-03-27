@@ -1,8 +1,5 @@
 import { McpTool } from '../types';
-import fetch from 'node-fetch';
 import { UsuarioService } from '../../api/services/usuario.service';
-
-const API_BASE = 'http://localhost:3000/api';
 
 export const usuariosTools: McpTool[] = [
   {
@@ -17,13 +14,8 @@ export const usuariosTools: McpTool[] = [
       required: ['nome_usuario', 'email_usuario']
     },
     execute: async (args: any) => {
-      const resp = await fetch(`${API_BASE}/usuarios`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(args)
-      });
-      if (!resp.ok) throw new Error(`Falha ao criar usuário: ${resp.statusText}`);
-      return await resp.json();
+      const usuarioService = new UsuarioService();
+      return await usuarioService.create(args);
     }
   },
   {
@@ -39,13 +31,8 @@ export const usuariosTools: McpTool[] = [
     },
     execute: async (args: any) => {
       const { id_usuario, ...body } = args;
-      const resp = await fetch(`${API_BASE}/usuarios/${id_usuario}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      });
-      if (!resp.ok) throw new Error(`Falha ao alterar usuário: ${resp.statusText}`);
-      return await resp.json();
+      const usuarioService = new UsuarioService();
+      return await usuarioService.update(id_usuario, body);
     }
   },
   {
@@ -59,10 +46,8 @@ export const usuariosTools: McpTool[] = [
       required: ['id_usuario']
     },
     execute: async (args: any) => {
-      const resp = await fetch(`${API_BASE}/usuarios/${args.id_usuario}`, {
-        method: 'DELETE'
-      });
-      if (!resp.ok) throw new Error(`Falha ao excluir usuário: ${resp.statusText}`);
+      const usuarioService = new UsuarioService();
+      await usuarioService.delete(args.id_usuario);
       return { success: true, message: 'Usuário excluído com sucesso' };
     }
   },
@@ -79,13 +64,8 @@ export const usuariosTools: McpTool[] = [
     },
     execute: async (args: any) => {
       const { id_usuario, id_perfil } = args;
-      const resp = await fetch(`${API_BASE}/usuarios/${id_usuario}/perfis`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id_perfil })
-      });
-      if (!resp.ok) throw new Error(`Falha ao adicionar perfil: ${resp.statusText}`);
-      return await resp.json();
+      const usuarioService = new UsuarioService();
+      return await usuarioService.addPerfil(id_usuario, id_perfil);
     }
   },
   {
@@ -101,12 +81,9 @@ export const usuariosTools: McpTool[] = [
     },
     execute: async (args: any) => {
       const { id_usuario, id_perfil } = args;
-      const resp = await fetch(`${API_BASE}/usuarios/${id_usuario}/perfis/${id_perfil}`, {
-        method: 'DELETE'
-      });
-      if (!resp.ok) throw new Error(`Falha ao remover perfil: ${resp.statusText}`);
-      if (resp.status === 204) return { success: true };
-      return await resp.json().catch(() => ({ success: true }));
+      const usuarioService = new UsuarioService();
+      await usuarioService.removePerfil(id_usuario, id_perfil);
+      return { success: true };
     }
   },
   {
@@ -120,9 +97,8 @@ export const usuariosTools: McpTool[] = [
       required: ['id_usuario']
     },
     execute: async (args: any) => {
-      const resp = await fetch(`${API_BASE}/usuarios/${args.id_usuario}`);
-      if (!resp.ok) throw new Error(`Falha ao buscar usuário por ID: ${resp.statusText}`);
-      return await resp.json();
+      const usuarioService = new UsuarioService();
+      return await usuarioService.findById(args.id_usuario);
     }
   },
   {
@@ -136,9 +112,8 @@ export const usuariosTools: McpTool[] = [
       required: ['nome_usuario']
     },
     execute: async (args: any) => {
-      const resp = await fetch(`${API_BASE}/usuarios/nome/${args.nome_usuario}`);
-      if (!resp.ok) throw new Error(`Falha ao buscar usuário por nome: ${resp.statusText}`);
-      return await resp.json();
+      const usuarioService = new UsuarioService();
+      return await usuarioService.findByNome(args.nome_usuario);
     }
   },
   {
@@ -152,9 +127,8 @@ export const usuariosTools: McpTool[] = [
       required: ['email_usuario']
     },
     execute: async (args: any) => {
-      const resp = await fetch(`${API_BASE}/usuarios/email/${args.email_usuario}`);
-      if (!resp.ok) throw new Error(`Falha ao buscar usuário por e-mail: ${resp.statusText}`);
-      return await resp.json();
+      const usuarioService = new UsuarioService();
+      return await usuarioService.findByEmail(args.email_usuario);
     }
   },
   {

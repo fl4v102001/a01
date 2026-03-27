@@ -1,7 +1,5 @@
 import { McpTool } from '../types';
-import fetch from 'node-fetch';
-
-const API_BASE = 'http://localhost:3000/api';
+import { PerfilService } from '../../api/services/perfil.service';
 
 export const perfisTools: McpTool[] = [
   {
@@ -15,13 +13,8 @@ export const perfisTools: McpTool[] = [
       required: ['nome_perfil']
     },
     execute: async (args: any) => {
-      const resp = await fetch(`${API_BASE}/perfis`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(args)
-      });
-      if (!resp.ok) throw new Error(`Falha ao criar perfil: ${resp.statusText}`);
-      return await resp.json();
+      const perfilService = new PerfilService();
+      return await perfilService.create(args);
     }
   },
   {
@@ -37,13 +30,8 @@ export const perfisTools: McpTool[] = [
     },
     execute: async (args: any) => {
       const { id_perfil, ...body } = args;
-      const resp = await fetch(`${API_BASE}/perfis/${id_perfil}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      });
-      if (!resp.ok) throw new Error(`Falha ao alterar perfil: ${resp.statusText}`);
-      return await resp.json();
+      const perfilService = new PerfilService();
+      return await perfilService.update(id_perfil, body);
     }
   },
   {
@@ -57,10 +45,8 @@ export const perfisTools: McpTool[] = [
       required: ['id_perfil']
     },
     execute: async (args: any) => {
-      const resp = await fetch(`${API_BASE}/perfis/${args.id_perfil}`, {
-        method: 'DELETE'
-      });
-      if (!resp.ok) throw new Error(`Falha ao excluir perfil: ${resp.statusText}`);
+      const perfilService = new PerfilService();
+      await perfilService.delete(args.id_perfil);
       return { success: true, message: 'Perfil excluído com sucesso' };
     }
   },
@@ -75,9 +61,8 @@ export const perfisTools: McpTool[] = [
       required: ['id_perfil']
     },
     execute: async (args: any) => {
-      const resp = await fetch(`${API_BASE}/perfis/${args.id_perfil}`);
-      if (!resp.ok) throw new Error(`Falha ao buscar perfil por ID: ${resp.statusText}`);
-      return await resp.json();
+      const perfilService = new PerfilService();
+      return await perfilService.findById(args.id_perfil);
     }
   },
   {
@@ -91,9 +76,8 @@ export const perfisTools: McpTool[] = [
       required: ['nome_perfil']
     },
     execute: async (args: any) => {
-      const resp = await fetch(`${API_BASE}/perfis/nome/${args.nome_perfil}`);
-      if (!resp.ok) throw new Error(`Falha ao buscar perfil por nome: ${resp.statusText}`);
-      return await resp.json();
+      const perfilService = new PerfilService();
+      return await perfilService.findByNome(args.nome_perfil);
     }
   }
 ];

@@ -1,7 +1,5 @@
 import { McpTool } from '../types';
-import fetch from 'node-fetch';
-
-const API_BASE = 'http://localhost:3000/api';
+import { TransacaoService } from '../../api/services/transacao.service';
 
 export const transacoesTools: McpTool[] = [
   {
@@ -15,13 +13,8 @@ export const transacoesTools: McpTool[] = [
       required: ['nome_transacao']
     },
     execute: async (args: any) => {
-      const resp = await fetch(`${API_BASE}/transacoes`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(args)
-      });
-      if (!resp.ok) throw new Error(`Falha ao criar transação: ${resp.statusText}`);
-      return await resp.json();
+      const transacaoService = new TransacaoService();
+      return await transacaoService.create(args);
     }
   },
   {
@@ -37,13 +30,8 @@ export const transacoesTools: McpTool[] = [
     },
     execute: async (args: any) => {
       const { id_transacao, ...body } = args;
-      const resp = await fetch(`${API_BASE}/transacoes/${id_transacao}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      });
-      if (!resp.ok) throw new Error(`Falha ao alterar transação: ${resp.statusText}`);
-      return await resp.json();
+      const transacaoService = new TransacaoService();
+      return await transacaoService.update(id_transacao, body);
     }
   },
   {
@@ -57,10 +45,8 @@ export const transacoesTools: McpTool[] = [
       required: ['id_transacao']
     },
     execute: async (args: any) => {
-      const resp = await fetch(`${API_BASE}/transacoes/${args.id_transacao}`, {
-        method: 'DELETE'
-      });
-      if (!resp.ok) throw new Error(`Falha ao excluir transação: ${resp.statusText}`);
+      const transacaoService = new TransacaoService();
+      await transacaoService.delete(args.id_transacao);
       return { success: true, message: 'Transação excluída com sucesso' };
     }
   },
@@ -75,9 +61,8 @@ export const transacoesTools: McpTool[] = [
       required: ['id_transacao']
     },
     execute: async (args: any) => {
-      const resp = await fetch(`${API_BASE}/transacoes/${args.id_transacao}`);
-      if (!resp.ok) throw new Error(`Falha ao buscar transação por ID: ${resp.statusText}`);
-      return await resp.json();
+      const transacaoService = new TransacaoService();
+      return await transacaoService.findById(args.id_transacao);
     }
   },
   {
@@ -91,9 +76,8 @@ export const transacoesTools: McpTool[] = [
       required: ['nome_transacao']
     },
     execute: async (args: any) => {
-      const resp = await fetch(`${API_BASE}/transacoes/nome/${args.nome_transacao}`);
-      if (!resp.ok) throw new Error(`Falha ao buscar transação por nome: ${resp.statusText}`);
-      return await resp.json();
+      const transacaoService = new TransacaoService();
+      return await transacaoService.findByNome(args.nome_transacao);
     }
   }
 ];

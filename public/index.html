@@ -37,10 +37,23 @@
                     body: JSON.stringify({ prompt })
                 });
                 
-                const data = await response.json();
-                resultEl.value = typeof data.result === 'string' 
-                    ? data.result 
-                    : JSON.stringify(data.result, null, 2);
+                // Prepara a leitura do Stream de texto
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder('utf-8');
+                resultEl.value = ""; // Limpa a mensagem de "Pensando..."
+
+                // Loop para ler os pedaços (chunks) conforme chegam do servidor
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    
+                    // Decodifica o pedaço recebido e anexa ao textarea
+                    const chunk = decoder.decode(value, { stream: true });
+                    resultEl.value += chunk;
+                    
+                    // Auto-scroll para manter o final do texto sempre visível
+                    resultEl.scrollTop = resultEl.scrollHeight;
+                }
             } catch (err) {
                 resultEl.value = "Erro de conexão com o agente.";
             } finally {
