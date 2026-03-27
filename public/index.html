@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>MCP Agent Chat</title>
+</head>
+<body>
+    <h1>Agente MCP - Gemini</h1>
+    
+    <div>
+        <textarea id="prompt" rows="5" cols="60" placeholder="Digite seu prompt ou comando aqui..."></textarea>
+    </div>
+    
+    <button id="sendBtn">Enviar via Agente</button>
+    
+    <h2>Resultado:</h2>
+    <pre id="result"></pre>
+
+    <script>
+        const btn = document.getElementById('sendBtn');
+        const promptEl = document.getElementById('prompt');
+        const resultEl = document.getElementById('result');
+
+        btn.addEventListener('click', async () => {
+            const prompt = promptEl.value.trim();
+            if (!prompt) return;
+
+            btn.disabled = true;
+            resultEl.innerText = "Pensando e executando MCP...";
+
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt })
+                });
+                
+                const data = await response.json();
+                resultEl.innerText = JSON.stringify(data.result, null, 2);
+            } catch (err) {
+                resultEl.innerText = "Erro de conexão com o agente.";
+            } finally {
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
