@@ -11,6 +11,7 @@ type UsuarioCreateData = {
 type UsuarioUpdateData = Partial<UsuarioCreateData>;
 
 export class UsuarioService {
+
     private usuarioRepository = AppDataSource.getRepository(Usuario);
     private perfilRepository = AppDataSource.getRepository(Perfil);
 
@@ -107,8 +108,8 @@ export class UsuarioService {
         return usuario;
     }
 
-    async listUserComplete(): Promise<Usuario[]> {
-        return this.usuarioRepository.find({
+    async listAllUsers(): Promise<Usuario[]> {
+        return AppDataSource.getRepository(Usuario).find({
             relations: {
                 perfis: {
                     perfilVsTransacoes: {

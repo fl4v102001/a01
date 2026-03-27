@@ -1,5 +1,6 @@
 import { McpTool } from '../types';
 import fetch from 'node-fetch';
+import { UsuarioService } from '../../api/services/usuario.service';
 
 const API_BASE = 'http://localhost:3000/api';
 
@@ -154,6 +155,21 @@ export const usuariosTools: McpTool[] = [
       const resp = await fetch(`${API_BASE}/usuarios/email/${args.email_usuario}`);
       if (!resp.ok) throw new Error(`Falha ao buscar usuário por e-mail: ${resp.statusText}`);
       return await resp.json();
+    }
+  },
+  {
+    name: 'listar_todos_usuarios',
+    description: 'Lista todos os usuários cadastrados, incluindo seus perfis e transações vinculadas a eles.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+      },
+      required: []
+    },
+    execute: async () => {
+      const usuarioService = new UsuarioService();
+      const usuarios = await usuarioService.listAllUsers();
+      return usuarios;
     }
   }
 ];
