@@ -110,7 +110,7 @@ export const usuariosTools: McpTool[] = [
   },
   {
     name: 'buscar_usuario_por_id',
-    description: 'Busca um usuário específico pelo seu ID.',
+    description: 'Busca um usuário específico pelo seu ID. Retorna também todos os perfis associados ao usuário e todas as transações de cada perfil.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -126,7 +126,7 @@ export const usuariosTools: McpTool[] = [
   },
   {
     name: 'buscar_usuario_por_nome',
-    description: 'Busca usuários baseando-se em uma busca textual pelo nome completo (ou parte dele).',
+    description: 'Busca usuários baseando-se em uma busca textual pelo nome completo (ou parte dele). O retorno inclui também os perfis associados a cada usuário e as transações de cada perfil.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -142,7 +142,7 @@ export const usuariosTools: McpTool[] = [
   },
   {
     name: 'buscar_usuario_por_email',
-    description: 'Busca um usuário exato pelo seu endereço de e-mail.',
+    description: 'Busca um usuário exato pelo seu endereço de e-mail. Retorna também todos os perfis associados ao usuário e todas as transações vinculadas a esses perfis.',
     inputSchema: {
       type: 'object',
       properties: {

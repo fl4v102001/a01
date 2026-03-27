@@ -21,15 +21,42 @@ export class UsuarioService {
     }
 
     async findById(id: number): Promise<Usuario | null> {
-        return this.usuarioRepository.findOneBy({ id_usuario: id });
+        return this.usuarioRepository.findOne({
+            where: { id_usuario: id },
+            relations: {
+                perfis: {
+                    perfilVsTransacoes: {
+                        transacao: true
+                    }
+                }
+            }
+        });
     }
 
     async findByNome(nome: string): Promise<Usuario[]> {
-        return this.usuarioRepository.findBy({ nome_usuario: ILike(`%${nome}%`) });
+        return this.usuarioRepository.find({
+            where: { nome_usuario: ILike(`%${nome}%`) },
+            relations: {
+                perfis: {
+                    perfilVsTransacoes: {
+                        transacao: true
+                    }
+                }
+            }
+        });
     }
 
     async findByEmail(email: string): Promise<Usuario | null> {
-        return this.usuarioRepository.findOneBy({ email_usuario: email });
+        return this.usuarioRepository.findOne({
+            where: { email_usuario: email },
+            relations: {
+                perfis: {
+                    perfilVsTransacoes: {
+                        transacao: true
+                    }
+                }
+            }
+        });
     }
 
     async update(id: number, data: UsuarioUpdateData): Promise<Usuario | null> {
@@ -78,5 +105,17 @@ export class UsuarioService {
         usuario.perfis = usuario.perfis.filter(p => p.id_perfil !== id_perfil);
         await this.usuarioRepository.save(usuario);
         return usuario;
+    }
+
+    async listUserComplete(): Promise<Usuario[]> {
+        return this.usuarioRepository.find({
+            relations: {
+                perfis: {
+                    perfilVsTransacoes: {
+                        transacao: true
+                    }
+                }
+            }
+        });
     }
 }

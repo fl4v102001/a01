@@ -14,7 +14,9 @@
     <button id="sendBtn">Enviar via Agente</button>
     
     <h2>Resultado:</h2>
-    <pre id="result"></pre>
+    <div>
+        <textarea id="result" rows="5" cols="60" readonly placeholder="O resultado aparecerá aqui..."></textarea>
+    </div>
 
     <script>
         const btn = document.getElementById('sendBtn');
@@ -26,7 +28,7 @@
             if (!prompt) return;
 
             btn.disabled = true;
-            resultEl.innerText = "Pensando e executando MCP...";
+            resultEl.value = "Pensando e executando MCP...";
 
             try {
                 const response = await fetch('/api/chat', {
@@ -36,9 +38,11 @@
                 });
                 
                 const data = await response.json();
-                resultEl.innerText = JSON.stringify(data.result, null, 2);
+                resultEl.value = typeof data.result === 'string' 
+                    ? data.result 
+                    : JSON.stringify(data.result, null, 2);
             } catch (err) {
-                resultEl.innerText = "Erro de conexão com o agente.";
+                resultEl.value = "Erro de conexão com o agente.";
             } finally {
                 btn.disabled = false;
             }
