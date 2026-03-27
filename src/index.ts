@@ -1,7 +1,6 @@
 import 'reflect-metadata';
 import express from 'express';
 import { AppDataSource } from './data-source';
-import { apiRoutes } from './api/routes';
 import { errorHandler } from './api/middlewares/errorHandler';
 import mcpRouter from './mcp';
 import { runAgent } from './agent/agent';
@@ -24,7 +23,6 @@ const main = async () => {
     app.use(express.static(path.join(__dirname, '../public')));
 
     // Registrar rotas
-    app.use('/api', apiRoutes);
     app.use('/mcp', mcpRouter);
 
     // Frontend endpoint
