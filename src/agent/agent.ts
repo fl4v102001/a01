@@ -2,17 +2,15 @@
 import fetch from "node-fetch";
 import OpenAI from "openai";
 import { config } from 'dotenv';
+import * as path from 'path';
 
-config(); // Carrega as variáveis de ambiente do .env
+// Resolve o caminho absoluto apontando para a raiz do projeto (dois níveis acima de src/agent/)
+config({ path: path.resolve(__dirname, '../../.env') });
 console.log("Chave do Gemini:", process.env.GEMINI_API_KEY);
-// NOTE: The public Gemini API is not directly compatible with the OpenAI SDK.
-// You need to use a proxy that translates OpenAI API requests to Gemini API requests.
-// The baseURL should be the URL of your proxy. The proxy will also handle
-// translating the 'Authorization: Bearer <key>' header sent by this client
-// to the format Gemini expects.
+// You can use the Gemini API directly with the OpenAI SDK by pointing the baseURL to the Gemini OpenAI compatibility endpoint.
 const client = new OpenAI({
-  apiKey: process.env.GEMINI_API_KEY, // Your Gemini API key must be in your .env file
-  baseURL: 'https://your-gemini-proxy.com/v1', // Replace with your actual proxy URL
+  apiKey: process.env.GEMINI_API_KEY, 
+  baseURL: "https://generativelanguage.googleapis.com/v1beta/openai/"
 });
 
 // Função para carregar catálogo de tools do MCP Server
@@ -48,8 +46,7 @@ Sua tarefa: decidir qual ferramenta usar e gerar a chamada JSON no formato:
 `;
 
   const completion = await client.chat.completions.create({
-    // Use the model name your proxy expects for Gemini 1.5 Flash
-    model: 'gemini-1.5-flash-latest',
+    model: 'gemini-2.5-flash',
     messages: [
       { role: "system", content: systemPrompt },
       { role: "user", content: prompt }
@@ -64,9 +61,16 @@ Sua tarefa: decidir qual ferramenta usar e gerar a chamada JSON no formato:
   try {
     const cleanJson = (llmResponse || "{}").replace(/```json/g, "").replace(/```/g, "").trim();
     parsed = JSON.parse(cleanJson);
+    
+    // Se interpretou como JSON mas não tem um "tool" definido, apenas retorne o texto
+    if (!parsed || !parsed.tool) {
+      return llmResponse;
+    }
   } catch {
-    console.error("Erro ao interpretar resposta do LLM");
-    return null;
+    // Quando o LLM falha ao gerar JSON (ou seja, escreveu texto livre para o usuário)
+    // nós repassamos essa resposta diretamente, em vez de retornar null
+    console.log("LLM respondeu em texto livre.");
+    return llmResponse;
   }
 
   // 4. Executar tool escolhida
