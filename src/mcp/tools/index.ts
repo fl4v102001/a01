@@ -3,10 +3,12 @@ import { usuariosTools } from './usuarios.tools';
 import { perfisTools } from './perfis.tools';
 import { transacoesTools } from './transacoes.tools';
 import { autorizacoesTools } from './autorizacoes.tools';
+import { geralTools } from './geral.tools';
 
 export const allTools: McpTool[] = [
   ...usuariosTools,
   ...perfisTools,
   ...transacoesTools,
-  ...autorizacoesTools
+  ...autorizacoesTools,
+  ...geralTools
 ];

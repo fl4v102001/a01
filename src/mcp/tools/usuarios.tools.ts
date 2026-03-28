@@ -20,12 +20,13 @@ export const usuariosTools: McpTool[] = [
   },
   {
     name: 'alterar_usuario',
-    description: 'Atualiza os dados (como o nome) de um usuário existente pelo seu ID.',
+    description: 'Atualiza os dados (como o nome e e-mail) de um usuário existente pelo seu ID.',
     inputSchema: {
       type: 'object',
       properties: {
         id_usuario: { type: 'number', description: 'O ID único do usuário' },
-        nome_usuario: { type: 'string', description: 'O novo nome do usuário' }
+        nome_usuario: { type: 'string', description: 'O novo nome do usuário' },
+        email_usuario: { type: 'string', description: 'O novo endereço de email do usuário' }
       },
       required: ['id_usuario', 'nome_usuario']
     },

@@ -49,7 +49,8 @@ REGRA CRUCIAL DE EXECUÇÃO EM LOOP:
 Se você precisar usar uma ferramenta, você vai responder EXATAMENTE COM UM JSON e NADA MAIS. O sistema lerá esse JSON, executará a ferramenta e lhe devolverá textualmente o "Resultado".
 Baseado nesse Resultado, você prossegue: Se faltar etapas, você emite OUTRO JSON correspondente à próxima etapa. Pense passo a passo.
 APENAS responda com texto livre (sem nenhum JSON ou chaves {}) QUANDO você tiver concluído TODA a tarefa original pedida pelo usuário e quiser dar a resposta final.
-Nunca invente IDs ou tente adivinhar chaves de banco de dados. Sempre que necessário, faça chamadas de busca ('buscar_...') antes de tentar inserir novos registros.
+Nunca invente IDs ou tente adivinhar chaves de banco de dados. Sempre que necessário, faça chamadas de busca ('buscar_...') antes de tentar inserir novos registros. 
+Caso apareça o nome de uma pessoa assuma que é um usuário do sistema e busque por ele usando as ferramentas de busca disponíveis para obter seu ID e e-mail antes de tentar criar ou alterar registros relacionados a ele.
 `;
 
   let messages: any[] = [
@@ -66,8 +67,8 @@ Nunca invente IDs ou tente adivinhar chaves de banco de dados. Sempre que necess
     
     // Na API gratuita, podemos tomar "429 Too Many Requests" após vários chamados rápidos.
     if (iteration > 1) {
-      console.log("Aguardando 4s para evitar limite de taxa da API Gemini (Erro 429)...");
-      await delay(4000);
+      console.log("Aguardando 2s para evitar limite de taxa da API Gemini (Erro 429)...");
+      await delay(2000);
     }
 
     let completion;
