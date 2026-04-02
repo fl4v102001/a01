@@ -1,18 +1,18 @@
 {
   "compilerOptions": {
-    "target": "es2017",
-    "module": "commonjs",
+    "target": "ES2022",
+    "module": "NodeNext",
     "lib": [
-      "dom",
-      "es6",
-      "es2017",
-      "esnext.asynciterable"
+      "ES2022",
+      "DOM"
     ],
     "skipLibCheck": true,
     "sourceMap": true,
     "outDir": "./dist",
-    "moduleResolution": "node",
+    "rootDir": "./src",
+    "moduleResolution": "NodeNext",
     "removeComments": true,
+    "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
     "strictNullChecks": false,
     "strictFunctionTypes": true,
@@ -25,9 +25,8 @@
     "esModuleInterop": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "resolveJsonModule": true,
-    "baseUrl": "."
-  },
+    "resolveJsonModule": true
+    },
   "exclude": [
     "node_modules"
   ],
