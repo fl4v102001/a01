@@ -14,7 +14,7 @@
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js -d ./src/data-source.ts",
     "migration:generate": "npm run typeorm -- migration:generate",
     "migration:run": "npm run typeorm -- migration:run",
-    "start": "node --max-old-space-size=4096 ./src/index.ts"
+    "start": "ts-node ./src/index.ts"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",
