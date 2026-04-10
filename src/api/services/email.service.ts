@@ -1,7 +1,6 @@
 import nodemailer from 'nodemailer';
-import { gmail_v1 } from '@googleapis/gmail';
+import { gmail, gmail_v1, auth } from '@googleapis/gmail';
 import path from 'path';
-import { google } from 'googleapis';
 
 class EmailService {
     private transporter: nodemailer.Transporter | undefined;
@@ -31,7 +30,7 @@ class EmailService {
         } else {
             console.log('\nInitializing Gmail API for production...\n');
             
-            const oauth2Client = new google.auth.OAuth2(
+            const oauth2Client = new auth.OAuth2(
                 process.env.OAUTH_CLIENT_ID,
                 process.env.OAUTH_CLIENT_SECRET,
                 "https://developers.google.com/oauthplayground"
@@ -42,7 +41,7 @@ class EmailService {
             });
 
             // Inicializa o cliente da API do Gmail
-            this.gmailClient = google.gmail({ version: 'v1', auth: oauth2Client });
+            this.gmailClient = gmail({ version: 'v1', auth: oauth2Client });
             console.log('Gmail API client initialized for production.');
         }
     }
