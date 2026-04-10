@@ -74,8 +74,24 @@
                     // Decodifica o pedaço recebido, acumula e injeta o HTML diretamente
                     const chunk = decoder.decode(value, { stream: true });
                     fullText += chunk;
-                    resultEl.innerHTML = fullText;
                     
+                    let displayText = fullText;
+
+                    // Se a resposta chegar envelopada em JSON ({"result": "..."}), extrai apenas o texto útil
+                    const match = displayText.match(/"result"\s*:\s*["']([\s\S]*)/i);
+                    if (match && match[1]) {
+                        // Remove o restolho do fechamento do JSON caso o stream já tenha terminado
+                        displayText = match[1].replace(/["']\s*}?\s*$/, '');
+                    }
+
+                    // Transforma os escapes literais do LLM (\n, \", \t) nos caracteres verdadeiros
+                    displayText = displayText.replace(/\\+n/g, '\n').replace(/\\+"/g, '"').replace(/\\+t/g, '\t');
+                    
+                    // Achatamento drástico: espreme todos os abismos vazios (espaços + \n) para no máximo dois pulos
+                    displayText = displayText.replace(/(\n\s*){2,}/g, '\n\n');
+
+                    resultEl.innerHTML = displayText;
+
                     // Auto-scroll para manter o final do texto sempre visível
                     resultEl.scrollTop = resultEl.scrollHeight;
                 }
