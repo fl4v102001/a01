@@ -1,6 +1,7 @@
 import nodemailer from 'nodemailer';
-import { google, gmail_v1 } from 'googleapis';
+import { gmail_v1 } from '@googleapis/gmail';
 import path from 'path';
+import { google } from 'googleapis';
 
 class EmailService {
     private transporter: nodemailer.Transporter | undefined;

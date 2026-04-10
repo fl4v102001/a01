@@ -3,6 +3,7 @@ import fetch from "node-fetch";
 import OpenAI from "openai";
 import { config } from 'dotenv';
 import * as path from 'path';
+import { converterParaHtmlEmail } from "./formatar.service";
 
 // Resolve o caminho absoluto apontando para a raiz do projeto (dois níveis acima de src/agent/)
 config({ path: path.resolve(__dirname, '../../.env') });
@@ -115,13 +116,13 @@ Caso apareça o nome de uma pessoa assuma que é um usuário do sistema e busque
       
       // Se interpretou como JSON mas não tem um "tool" definido, apenas retorne o texto
       if (!parsed || !parsed.tool) {
-        return llmResponse;
+        return converterParaHtmlEmail(llmResponse);
       }
     } catch {
       // Quando o LLM falha ao gerar JSON (escreveu texto livre para o usuário)
       // nós repassamos essa resposta diretamente, quebrando o loop.
       console.log("LLM respondeu em texto livre. Encerrando loop.");
-      return llmResponse;
+      return converterParaHtmlEmail(llmResponse);
     }
 
     // Executar tool escolhida
